@@ -3,13 +3,10 @@
 
 # define WIDTH 800
 # define HEIGHT 800
-# define THREAD 4
 
-# define XVAL tools->x
-# define YVAL tools->y
-# define LINE tools->line
-# define SHITMAP tools->shitmap
 # define PI 3.14159265359
+
+# define KEY_R				15
 
 # include "minilibx/mlx.h"
 # include "libft/libft.h"
@@ -20,6 +17,32 @@
 # include <fcntl.h>
 # include <stdbool.h>
 # include <math.h>
+
+typedef struct		s_juul
+{
+	double			a;
+	double			b;
+	double			prev_a;
+	double			prev_b;
+	double			zx;
+	double			zy;
+	int				x;
+	int				y;
+	int				n;
+}					t_juul;
+
+typedef struct		s_burn
+{
+	double			a;
+	double			b;
+	double			prev_a;
+	double			prev_b;
+	double			realx;
+	double			realy;
+	int				x;
+	int				y;
+	int				n;
+}					t_burn;
 
 typedef struct		s_man
 {
@@ -33,11 +56,6 @@ typedef struct		s_man
 	double			b;
 	int				color;
 }					t_man;
-
-typedef struct		s_thread
-{
-	pthread_t		thread[4];
-}					t_thread;
 
 typedef struct		s_events
 {
@@ -56,7 +74,6 @@ typedef struct		s_events
 
 typedef struct		s_env
 {
-	t_thread		*thread;
 	t_man			*man;
 	t_events		*events;
 	void			*mlx;
@@ -84,26 +101,37 @@ typedef struct		s_juul
 	int				n;
 }					t_juul;
 
-t_env   *init_env(void);
-void    ft_exit(t_env *all);
-int     ft_printusage(void);
-int keyhook_down(int key, t_env *all);
-int keyhook(int key, t_env *e);
-int     ft_spliter(char *str, t_env *e);
-int     draw(t_env *e);
-void    man_scale(t_env *e);
-void    mandelbro(t_env *j);
-t_man   *square(t_man *man);
-void		controls_helper(t_env *j);
-void		add_thread(t_juul *all);
-t_juul		*square_juul(t_juul *all);
-void    put_pixel_img(t_env *j, int x, int y, int color);
-void	*julia(void *j);
-void	juul_scale(t_env *e, t_juul *all);
-int		*thread_create(t_env *e);
-void		add_julia_ab(t_juul *all, t_env *e);
-void		find_julia_ab(t_juul *all, t_env *e);
-t_juul		*environment_cpy(t_env *j);
+typedef struct		s_pheen
+{
+	double			a;
+	double			b;
+	double			prev_a;
+	double			prev_b;
+	double			realx;
+	double			realy;
+	int				x;
+	int				y;
+	int				n;
+}					t_pheen;
+
+t_env		*init_env(void);
+void		ft_exit(t_env *all);
+int			keyhook_down(int key, t_env *all);
+int 		keyhook(int key, t_env *e);
 int			motion_hook(int x, int y, t_env *all);
+int			fractols(char *str, t_env *e);
+int			draw(t_env *e);
+void		man_scale(t_env *e);
+void		mandelbrot(t_env *j);
+t_man   	*square(t_man *man);
+t_juul		*square_juul(t_juul *all);
+void		put_pixel_img(t_env *j, int x, int y, int color);
+void		juul(t_env *j);
+void		juul_scale(t_juul *all, t_env *e);
+int			motion_hook(int x, int y, t_env *all);
+void		burns_scale(t_pheen *e, t_env *j);
+void		burns(t_env *j);
+void		burns_square(t_pheen *e);
+int			mouse_hook(int btn, int x, int y, t_env *all);
 
 #endif

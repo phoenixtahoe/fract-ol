@@ -6,28 +6,11 @@
 /*   By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/15 17:41:55 by pdavid            #+#    #+#             */
-/*   Updated: 2018/05/21 21:27:23 by pdavid           ###   ########.fr       */
+/*   Updated: 2018/05/27 18:17:03 by pdavid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-
-void		add_thread(t_juul *all)
-{
-	all->a = all->zx + all->prev_a;
-	all->b = all->zy + all->prev_b;
-}
-
-t_juul		*square_juul(t_juul *all)
-{
-	double tmp;
-	
-	tmp = (all->a * all->a) - (all->b * all->b);
-	all->zy = 2 * all->a * all->b;
-	all->zx = tmp;
-	add_thread(all);
-	return (all);
-}
 
 void    put_pixel_img(t_env *j, int x, int y, int color)
 {
@@ -42,20 +25,63 @@ void    put_pixel_img(t_env *j, int x, int y, int color)
     }
 }
 
-void		find_julia_ab(t_juul *all, t_env *e)
+int			fractols(char *str, t_env *e)
 {
-	all->a = ((double)(all->x - (WIDTH / 2)) /
-			(double)(WIDTH / 4) * e->events->zoom + e->events->xshift);
-	all->b = ((double)(all->y - (HEIGHT / 2)) /
-			(double)(HEIGHT / 4) * e->events->zoom + e->events->yshift);
-	all->n = 0;
+	if (e->fract == 0)
+	{
+		if (ft_strequ("mandelbrot", str))
+			e->fract = 1;
+		if (ft_strequ("juul", str))
+			e->fract = 2;
+		if (ft_strequ("burns", str))
+			e->fract = 3;
+		draw(e);
+	}
+	return (0);
 }
 
-void		add_julia_ab(t_juul *all, t_env *e)
+void	options(t_env *e)
 {
-	t_juul	*j;
+	mlx_string_put(e->mlx, e->window, 0,
+		0, 0xFFFFFF, "Iterations! [+ PAGEUP] [- PAGEDOWN]");
+	mlx_string_put(e->mlx, e->window, 0,
+		20, 0xFFFFFF, "Change color! [+ Home] [- End]");
+	mlx_string_put(e->mlx, e->window, 0,
+		40, 0xFFFFFF, "Zoom! [+ W] [-S]");
+	mlx_string_put(e->mlx, e->window, 0,
+		60, 0xFFFFFF, "Move! [< ^ v >]");
+}
 
-	j = all;
-	j->prev_a = e->events->julia_a;
-	j->prev_b = e->events->julia_b;
+int			draw(t_env *e)
+{
+	mlx_clear_window(e->mlx, e->window);
+	if (e->fract == 1)
+	{
+		mandelbrot(e);
+		options(e);
+	}
+	if (e->fract == 2)
+	{
+		juul(e);
+		options(e);
+	}
+	if (e->fract == 3)
+	{
+		burns(e);
+		options(e);
+	}
+	if (e->fract == 0)
+	{
+		ft_putstr("Usage: ./fractol [Mandelbrot] [juul] [pheen]\n");
+		exit(1);
+	}
+	return (0);
+}
+
+void    ft_exit(t_env *all)
+{
+    free(all->events);
+    free(all->man);
+    free(all);
+    exit(1);
 }

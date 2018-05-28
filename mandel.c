@@ -6,21 +6,11 @@
 /*   By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/15 18:52:39 by pdavid            #+#    #+#             */
-/*   Updated: 2018/05/21 17:56:53 by pdavid           ###   ########.fr       */
+/*   Updated: 2018/05/27 18:11:41 by pdavid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-
-void    man_scale(t_env *e)
-{
-    e->man->a = ((double)(e->man->x - (WIDTH / 2)) /
-    (double)(WIDTH / 4) * e->events->zoom + e->events->yshift);
-    e->man->b = ((double)(e->man->y - (WIDTH / 2)) /
-    (double)(WIDTH / 4) * e->events->zoom + e->events->xshift);
-    e->man->prev_a = e->man->a;
-    e->man->prev_b = e->man->b;
-}
 
 void		mandelbrot(t_env *j)
 {
@@ -59,4 +49,14 @@ t_man   *square(t_man *man)
     man->zx = tmp;
     man->zy = 2 * man->a * man->b;
     return (man);
+}
+
+void    man_scale(t_env *e)
+{
+    e->man->a = ((double)(e->man->x - (WIDTH / 2)) /
+    (double)(WIDTH / 4) * e->events->zoom + e->events->xshift);
+    e->man->b = ((double)(e->man->y - (WIDTH / 2)) /
+    (double)(WIDTH / 4) * e->events->zoom + e->events->yshift);
+    e->man->prev_a = e->man->a;
+    e->man->prev_b = e->man->b;
 }

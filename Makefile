@@ -6,7 +6,7 @@
 #    By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/05/17 16:08:20 by pdavid            #+#    #+#              #
-#    Updated: 2018/05/21 18:10:50 by pdavid           ###   ########.fr        #
+#    Updated: 2018/05/27 20:40:27 by pdavid           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ header = fractol.h
 
 includes = ./libft/libft.a ./minilibx/libmlx.a
 
-SRC = tools.c mandel.c main.c key.c init.c julia.c
+SRC = tools.c mandel.c main.c mlx.c init.c julia.c burns.c
 
 OBJ = *.o
 

@@ -6,39 +6,13 @@
 /*   By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/21 16:07:46 by pdavid            #+#    #+#             */
-/*   Updated: 2018/05/21 21:22:43 by pdavid           ###   ########.fr       */
+/*   Updated: 2018/05/27 17:53:57 by pdavid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	*julia1(void *j)
-{
-	t_env *e;
-	t_juul *all;
-	
-	e = j;
-	all = (t_juul *)malloc(sizeof(t_juul));
-	all->x = 0;
-	add_julia_ab(all, e);
-	while (all->x++ != WIDTH / 2)
-	{
-		all->y = -1;
-		while (all->y++ != WIDTH / 2)
-		{
-			find_julia_ab(all, e);
-			while(++all->n != e->iteration && (sqrt((all->a * all->a)
-					+ (all->b * all->b)) < 2.0))
-					square_juul(all);
-			all->n == e->iteration ? put_pixel_img(e, all->x, all->y, 0)
-					: put_pixel_img(e, all->x, all->y, all->n * e->man->color);
-		}
-	}
-	free(all);
-	return (NULL);
-}
-
-void	*julia2(void *j)
+void	juul(t_env *j)
 {
 	t_env *e;
 	t_juul *all;
@@ -46,13 +20,12 @@ void	*julia2(void *j)
 	e = j;
 	all = (t_juul *)malloc(sizeof(t_juul));
 	all->x = -1;
-	add_julia_ab(all, e);
-	while (all->x++ != WIDTH / 2)
+	while (all->x++ != WIDTH)
 	{
-		all->y = WIDTH / 2;
-		while (all->y++ != WIDTH / 2)
+		all->y = -1;
+		while (all->y++ != WIDTH)
 		{
-			find_julia_ab(all, e);
+			juul_scale(all, e);
 			while(++all->n != e->iteration && (sqrt((all->a * all->a)
 					+ (all->b * all->b)) < 2.0))
 					square_juul(all);
@@ -61,73 +34,31 @@ void	*julia2(void *j)
 		}
 	}
 	free(all);
-	return (NULL);
-}
-
-void	*julia3(void *j)
-{
-	t_env *e;
-	t_juul *all;
-	
-	e = j;
-	all = (t_juul *)malloc(sizeof(t_juul));
-	all->x = WIDTH / 2;
-	add_julia_ab(all, e);
-	while (all->x++ != WIDTH / 2)
-	{
-		all->y = WIDTH / 2;
-		while (all->y++ != WIDTH / 2)
-		{
-			find_julia_ab(all, e);
-			while(++all->n != e->iteration && (sqrt((all->a * all->a)
-					+ (all->b * all->b)) < 2.0))
-					square_juul(all);
-			all->n == e->iteration ? put_pixel_img(e, all->x, all->y, 0)
-					: put_pixel_img(e, all->x, all->y, all->n * e->man->color);
-		}
-	}
-	free(all);
-	return (NULL);
-}
-
-void	*julia4(void *j)
-{
-	t_env *e;
-	t_juul *all;
-	
-	e = j;
-	all = (t_juul *)malloc(sizeof(t_juul));
-	all->x = WIDTH / 2;
-	add_julia_ab(all, e);
-	while (all->x++ != WIDTH / 2)
-	{
-		all->y = 0;
-		while (all->y++ != WIDTH / 2)
-		{
-			find_julia_ab(all, e);
-			while(++all->n != e->iteration && (sqrt((all->a * all->a)
-					+ (all->b * all->b)) < 2.0))
-					square_juul(all);
-			all->n == e->iteration ? put_pixel_img(e, all->x, all->y, 0)
-					: put_pixel_img(e, all->x, all->y, all->n * e->man->color);
-		}
-	}
-	free(all);
-	return (NULL);
-}
-
-int		*thread_create(t_env *e)
-{
-	int i;
-	
-	i = 1;
-	pthread_create(&e->thread->thread[1], NULL, julia1, e);
-	pthread_create(&e->thread->thread[2], NULL, julia2, e);
-	pthread_create(&e->thread->thread[3], NULL, julia3, e);
-	pthread_create(&e->thread->thread[4], NULL, julia4, e);
-	while (i != 4)
-		i++;
-		pthread_join(e->thread->thread[i], NULL);
 	mlx_put_image_to_window(e->mlx, e->window, e->image, 0, 0);
-	return (0);
+}
+
+t_juul		*square_juul(t_juul *all)
+{
+	double tmp;
+	
+	tmp = (all->a * all->a) - (all->b * all->b);
+	all->zy = 2 * all->a * all->b;
+	all->zx = tmp;
+	all->a = all->zx + all->prev_a;
+	all->b = all->zy + all->prev_b;
+	return (all);
+}
+
+void		juul_scale(t_juul *all, t_env *e)
+{
+	t_juul	*j;
+	
+	j = all;
+	j->prev_a = e->events->julia_a;
+	j->prev_b = e->events->julia_b;
+	all->a = ((double)(all->x - (WIDTH / 2)) /
+			(double)(WIDTH / 4) * e->events->zoom + e->events->xshift);
+	all->b = ((double)(all->y - (HEIGHT / 2)) /
+			(double)(HEIGHT / 4) * e->events->zoom + e->events->yshift);
+	all->n = 0;
 }
