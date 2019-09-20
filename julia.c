@@ -6,59 +6,47 @@
 /*   By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/21 16:07:46 by pdavid            #+#    #+#             */
-/*   Updated: 2018/05/27 17:53:57 by pdavid           ###   ########.fr       */
+/*   Updated: 2018/05/28 20:15:05 by pdavid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	juul(t_env *j)
+void		juul(t_env *e)
 {
-	t_env *e;
-	t_juul *all;
-	
-	e = j;
-	all = (t_juul *)malloc(sizeof(t_juul));
-	all->x = -1;
-	while (all->x++ != WIDTH)
+	e->juul->x = -1;
+	while (e->juul->x++ != WIDTH)
 	{
-		all->y = -1;
-		while (all->y++ != WIDTH)
+		e->juul->y = -1;
+		while (e->juul->y++ != HEIGHT)
 		{
-			juul_scale(all, e);
-			while(++all->n != e->iteration && (sqrt((all->a * all->a)
-					+ (all->b * all->b)) < 2.0))
-					square_juul(all);
-			all->n == e->iteration ? put_pixel_img(e, all->x, all->y, 0)
-					: put_pixel_img(e, all->x, all->y, all->n * e->man->color);
+			juul_scale(e);
+			while (++e->juul->n != e->iteration &&
+				e->juul->b * e->juul->b + e->juul->a * e->juul->a <= 4.0)
+				square_juul(e->juul);
+			e->juul->n == e->iteration ? pixel_img(e, e->juul->x, e->juul->y, 0)
+			: pixel_img(e, e->juul->x, e->juul->y, e->juul->n * e->man->color);
 		}
 	}
-	free(all);
 	mlx_put_image_to_window(e->mlx, e->window, e->image, 0, 0);
 }
 
-t_juul		*square_juul(t_juul *all)
+t_juul		*square_juul(t_juul *e)
 {
-	double tmp;
-	
-	tmp = (all->a * all->a) - (all->b * all->b);
-	all->zy = 2 * all->a * all->b;
-	all->zx = tmp;
-	all->a = all->zx + all->prev_a;
-	all->b = all->zy + all->prev_b;
-	return (all);
+	e->realy = 2 * e->a * e->b;
+	e->realx = (e->a * e->a) - (e->b * e->b);
+	e->a = e->realx + e->prev_a;
+	e->b = e->realy + e->prev_b;
+	return (e);
 }
 
-void		juul_scale(t_juul *all, t_env *e)
+void		juul_scale(t_env *e)
 {
-	t_juul	*j;
-	
-	j = all;
-	j->prev_a = e->events->julia_a;
-	j->prev_b = e->events->julia_b;
-	all->a = ((double)(all->x - (WIDTH / 2)) /
-			(double)(WIDTH / 4) * e->events->zoom + e->events->xshift);
-	all->b = ((double)(all->y - (HEIGHT / 2)) /
-			(double)(HEIGHT / 4) * e->events->zoom + e->events->yshift);
-	all->n = 0;
+	e->juul->prev_a = e->juul->ab;
+	e->juul->prev_b = e->juul->ba;
+	e->juul->a = ((double)(e->juul->x - (WIDTH / 2)) /
+			(double)(WIDTH / 4) * e->events->zoom + e->events->shiftx);
+	e->juul->b = ((double)(e->juul->y - (HEIGHT / 2)) /
+			(double)(HEIGHT / 4) * e->events->zoom + e->events->shifty);
+	e->juul->n = 0;
 }

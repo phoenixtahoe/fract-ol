@@ -1,12 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fractol.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/05/28 15:05:51 by pdavid            #+#    #+#             */
+/*   Updated: 2018/05/28 20:31:49 by pdavid           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
 # define WIDTH 800
 # define HEIGHT 800
-
 # define PI 3.14159265359
-
-# define KEY_R				15
 
 # include "minilibx/mlx.h"
 # include "libft/libft.h"
@@ -20,12 +29,14 @@
 
 typedef struct		s_juul
 {
+	double			ab;
+	double			ba;
 	double			a;
 	double			b;
 	double			prev_a;
 	double			prev_b;
-	double			zx;
-	double			zy;
+	double			realx;
+	double			realy;
 	int				x;
 	int				y;
 	int				n;
@@ -35,6 +46,8 @@ typedef struct		s_burn
 {
 	double			a;
 	double			b;
+	double			ba;
+	double			ab;
 	double			prev_a;
 	double			prev_b;
 	double			realx;
@@ -51,34 +64,28 @@ typedef struct		s_man
 	double			y;
 	double			x;
 	double			a;
-	double			zx;
-	double			zy;
 	double			b;
+	double			realx;
+	double			realy;
 	int				color;
+	int				n;
 }					t_man;
 
 typedef struct		s_events
 {
-	int				pageup;
-	int				pagedown;
-	int				intial_x;
-	int				intial_y;
-	int				mouse;
 	double			zoom;
-	double			yshift;
-	double			xshift;
-	int				colorshift;
-	double			julia_a;
-	double			julia_b;
+	double			shifty;
+	double			shiftx;
 }					t_events;
 
 typedef struct		s_env
 {
 	t_man			*man;
 	t_events		*events;
+	t_juul			*juul;
+	t_burn			*burn;
 	void			*mlx;
 	void			*image;
-	void			*image_ptr;
 	void			*window;
 	int				endian;
 	int				sl;
@@ -88,50 +95,23 @@ typedef struct		s_env
 	int				maxiter;
 }					t_env;
 
-typedef struct		s_juul
-{
-	double			a;
-	double			b;
-	double			prev_a;
-	double			prev_b;
-	double			zx;
-	double			zy;
-	int				x;
-	int				y;
-	int				n;
-}					t_juul;
-
-typedef struct		s_pheen
-{
-	double			a;
-	double			b;
-	double			prev_a;
-	double			prev_b;
-	double			realx;
-	double			realy;
-	int				x;
-	int				y;
-	int				n;
-}					t_pheen;
-
-t_env		*init_env(void);
-void		ft_exit(t_env *all);
-int			keyhook_down(int key, t_env *all);
-int 		keyhook(int key, t_env *e);
-int			motion_hook(int x, int y, t_env *all);
-int			fractols(char *str, t_env *e);
-int			draw(t_env *e);
-void		man_scale(t_env *e);
-void		mandelbrot(t_env *j);
-t_man   	*square(t_man *man);
-t_juul		*square_juul(t_juul *all);
-void		put_pixel_img(t_env *j, int x, int y, int color);
-void		juul(t_env *j);
-void		juul_scale(t_juul *all, t_env *e);
-int			motion_hook(int x, int y, t_env *all);
-void		burns_scale(t_pheen *e, t_env *j);
-void		burns(t_env *j);
-void		burns_square(t_pheen *e);
-int			mouse_hook(int btn, int x, int y, t_env *all);
+t_env				*init(void);
+void				ft_exit(t_env *all);
+int					keyhook(int key, t_env *e);
+int					keys(int key, t_env *all);
+int					motion_hook(int x, int y, t_env *all);
+int					mouse_hook(int btn, int x, int y, t_env *all);
+void				pixel_img(t_env *e, int x, int y, int color);
+int					fractols(char *str, t_env *e);
+int					draw(t_env *e);
+void				man_scale(t_env *e);
+void				mandelbrot(t_env *e);
+t_man				*square_mandel(t_man *man);
+t_juul				*square_juul(t_juul *all);
+void				juul(t_env *e);
+void				juul_scale(t_env *e);
+void				burns_scale(t_env *e);
+void				burns(t_env *e);
+t_burn				*burns_square(t_burn *e);
 
 #endif

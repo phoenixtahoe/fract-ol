@@ -6,30 +6,30 @@
 /*   By: pdavid <pdavid@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/05/15 17:41:55 by pdavid            #+#    #+#             */
-/*   Updated: 2018/05/27 18:17:03 by pdavid           ###   ########.fr       */
+/*   Updated: 2018/05/28 21:04:46 by pdavid           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void    put_pixel_img(t_env *j, int x, int y, int color)
+void	pixel_img(t_env *e, int x, int y, int color)
 {
-    t_env *e;
-    int hex;
+	void	*i;
+	int		hex;
 
-    e = j;
-    if (x < WIDTH && y < HEIGHT)
-    {
-        hex = mlx_get_color_value(e->mlx, color);
-        ft_memcpy(e->image_ptr + 4 * WIDTH * y + x * 4, &hex, sizeof(int));
-    }
+	if (x < WIDTH && y < HEIGHT)
+	{
+		i = mlx_get_data_addr(e->image, &(e->bpp), &(e->sl), &(e->endian));
+		hex = mlx_get_color_value(e->mlx, color);
+		ft_memcpy(i + 4 * WIDTH * y + x * 4, &hex, sizeof(int));
+	}
 }
 
-int			fractols(char *str, t_env *e)
+int		fractols(char *str, t_env *e)
 {
 	if (e->fract == 0)
 	{
-		if (ft_strequ("mandelbrot", str))
+		if (ft_strequ("mandelbro", str))
 			e->fract = 1;
 		if (ft_strequ("juul", str))
 			e->fract = 2;
@@ -52,7 +52,7 @@ void	options(t_env *e)
 		60, 0xFFFFFF, "Move! [< ^ v >]");
 }
 
-int			draw(t_env *e)
+int		draw(t_env *e)
 {
 	mlx_clear_window(e->mlx, e->window);
 	if (e->fract == 1)
@@ -72,16 +72,18 @@ int			draw(t_env *e)
 	}
 	if (e->fract == 0)
 	{
-		ft_putstr("Usage: ./fractol [Mandelbrot] [juul] [pheen]\n");
+		ft_putstr("Usage: ./fractol [mandelbro] [juul] [burns]\n");
 		exit(1);
 	}
 	return (0);
 }
 
-void    ft_exit(t_env *all)
+void	ft_exit(t_env *all)
 {
-    free(all->events);
-    free(all->man);
-    free(all);
-    exit(1);
+	free(all->events);
+	free(all->juul);
+	free(all->burn);
+	free(all->man);
+	free(all);
+	exit(1);
 }
